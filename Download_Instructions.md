@@ -77,7 +77,7 @@ For convenience, we will call `DATA_DIR` for the absolute path of directory whic
 
    
 
-6. After the download has been successfully completed, the file structure should be as follows:
+6. After the download has been successfully completed, the directory tree structure should be as follows:
 
 ```
 |-- ..
@@ -91,3 +91,147 @@ For convenience, we will call `DATA_DIR` for the absolute path of directory whic
         |-- RAW
 ```
 
+7. Navigate back into our repository folder and then copy the scripts and files required for creating dataset which will be used for training model into `DATA_DIR` .
+
+```bash
+cp select_video_subset.py [DATA_DIR]
+cp extract_frames.py [DATA_DIR]
+cp select_frames.py [DATA_DIR]
+cp requirements.txt [DATA_DIR]
+```
+
+Recall that `DATA_DIR = ../CMPE492_DeepFakeDetection_FaceForensics/HQ` .
+
+8. Run the script that will produce a subset of FaceForensics++ dataset in a way that the number of real and fake videos and the distribution of fake creation techniques are distributed evenly. This script will create a subset of FaceForensics++ dataset into the folder called `FaceForensicsDFD`.
+
+```bash
+python3 select_video_subset.py
+```
+
+9. Copy the scripts that are required for creating our own dataset into `FaceForensicsDFD` folder.
+
+```bash
+cp extract_frames.py FaceForensicsDFD
+cp select_frames.py FaceForensicsDFD
+cp requirements.txt FaceForensicsDFD
+```
+
+10. Navigate into `FaceForensicsDFD`.
+
+```bash
+cd FaceForensicsDFD
+```
+
+11. Create a virtual environment called `env` (you can choose any name) inside `FaceForensicsDFD`.
+
+```bash
+python3 -m venv env
+```
+
+ 1. Activate the virtual environment called `env`
+
+    ```bash
+    source env/bin/activate
+    ```
+
+    
+
+ 2. Make sure that your pip is referenced to pip3. Otherwise, please do not proceed ahead and contact us.
+
+    ```
+    pip -V
+    ```
+
+    
+
+ 3. Upgrade the pip of your virtual environment.
+
+    ```
+    pip install --upgrade pip
+    ```
+
+    
+
+ 4. Install the required packages into the virtual environment.
+
+    ```
+    pip3 install -r requirements.txt
+    ```
+
+
+12. At this stage, the directory tree structure should be as the following:
+
+```
+|-- ..
+    |-- CMPE492_DeepFakeDetection_FaceForensics
+        |-- LQ
+        |-- HQ
+        	|-- FaceForensicsDFD
+        		|-- manipulated_sequences
+        		|-- original_sequences
+        		|-- env
+        		|-- requirements.txt
+        		|-- extract_frames.py
+        		|-- select_frames.py
+        	|-- manipulated_sequences
+        	|-- original_sequences
+        	|-- download_script.py
+        	|-- faceforensics_download_v4.py
+        	|-- select_video_subset.py
+        	...
+        |-- RAW
+```
+
+
+
+13. Extract the frames within video sequences.
+
+```bash
+python3 extract_frames.py
+```
+
+
+
+14. Generate the dataset named `CMPE492DeepfakedetectionData` from the extracted frames automatically. Beware that this step might last long, since the faces within frames are detected, aligned, and cropped accordingly.
+
+```
+python3 select_frames.py
+```
+
+
+
+15. At this stage, the directory tree structure should be as the following:
+
+```
+|-- ..
+    |-- CMPE492_DeepFakeDetection_FaceForensics
+        |-- LQ
+        |-- HQ
+        	|-- FaceForensicsDFD
+        		|-- manipulated_sequences
+        		|-- original_sequences
+        		|-- CMPE492DeepfakedetectionData
+        			|-- Training
+        				|-- Training
+        					|-- Fake
+        					|-- Real
+        				|-- Validation
+        					|-- Fake
+        					|-- Real
+        			|-- Test
+        				|-- Fake
+        				|-- Real
+        		|-- env
+        		|-- requirements.txt
+        		|-- extract_frames.py
+        		|-- select_frames.py
+        	|-- manipulated_sequences
+        	|-- original_sequences
+        	|-- download_script.py
+        	|-- faceforensics_download_v4.py
+        	|-- select_video_subset.py
+        	...
+        |-- RAW
+```
+
+Please note that, while training our model, you will provide the path of `CMPE492DeepfakedetectionData` as the argument. We will later provide a readme file for training instructions.
