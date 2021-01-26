@@ -7,7 +7,7 @@ import csv
 import config
 
 # Imports the dataset.
-def import_data(directory,config):
+def import_data(directory,config,subset):
   """
   Imports the data according to given configurations.
   Arguments:
@@ -36,7 +36,9 @@ def import_data(directory,config):
     batch_size=config['Batch Size'],
     image_size=(config['Height'], config['Width']),
     shuffle=config['Shuffle'],
-    validation_split=config['Validation Split']
+    seed=config['Seed'],
+    validation_split=config['Validation Split'],
+    subset= subset
   )
 
 # Formats a dataset instance.
@@ -48,3 +50,10 @@ def format_example(image, label):
   image = (image/127.5) - 1
   image = tf.image.resize(image, (config.IMG_SHAPE[0], config.IMG_SHAPE[1]))
   return image, label
+
+def get_labels(data):
+  y_actual = list()
+  for image, label in data:
+    current_labels = label.numpy()
+    y_actual.extend(current_labels)
+  return y_actual

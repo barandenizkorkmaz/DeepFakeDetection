@@ -1,20 +1,14 @@
 import pathlib
-import os
-import sys
-import tensorflow as tf
-import numpy as np
-from deepface import DeepFace
 
 import config
 from utils import data_handler, evaluation_utils
 import model_utils
 
 # Import Training Data
-training_data_dir = pathlib.Path(config.PATH_TRAINING)
-validation_data_dir = pathlib.Path(config.PATH_VALIDATION)
+data_dir = pathlib.Path(config.PATH_TRAINING)
 print("Importing the Dataset...")
-raw_train = data_handler.import_data(training_data_dir,config.training_data_config)
-raw_validation = data_handler.import_data(validation_data_dir,config.validation_data_config)
+raw_train = data_handler.import_data(data_dir,config.raw_data_config,"training")
+raw_validation = data_handler.import_data(data_dir,config.raw_data_config,"validation")
 
 # Format the Dataset
 print("Formatting the Dataset...")
@@ -26,7 +20,7 @@ del raw_train, raw_validation
 cnn = model_utils.get_cnn_model()
 
 # Initial Model Status
-loss0,accuracy0 = cnn.evaluate(x=validation)
+loss0,accuracy0 = cnn.evaluate(validation)
 print("Initial Loss = {:.2f}, Initial Accuracy = {:.2f}".format(loss0,accuracy0))
 
 # Train Model

@@ -1,12 +1,9 @@
 import multiprocessing
-import os
-import pathlib
-import shutil
 import sys
 import cv2
+import os
+import pathlib
 import numpy as np
-
-from deepface import DeepFace
 from deepface.commons import functions
 
 NAME_DATA = "CMPE492_Deepfakedetection_Data"
@@ -18,44 +15,36 @@ root_directory = ['original_sequences','manipulated_sequences']
 directories_to_scan = []
 
 def create_dirs():
+    os.makedirs(data_dir)
     training_data_path = os.path.join(data_dir, 'Training')
     test_data_path = os.path.join(data_dir, 'Test')
-    training_training_data_path = os.path.join(training_data_path, 'Training')
-    training_validation_data_path = os.path.join(training_data_path, 'Validation')
-    training_training_fake_data_path = os.path.join(training_training_data_path, 'Fake')
-    training_training_real_data_path = os.path.join(training_training_data_path, 'Real')
-    training_validation_fake_data_path = os.path.join(training_validation_data_path, 'Fake')
-    training_validation_real_data_path = os.path.join(training_validation_data_path, 'Real')
+    training_fake_data_path = os.path.join(training_data_path, 'Fake')
+    training_real_data_path = os.path.join(training_data_path, 'Real')
     test_fake_data_path = os.path.join(test_data_path, 'Fake')
     test_real_data_path = os.path.join(test_data_path, 'Real')
-    
-    os.makedirs(training_training_fake_data_path)
-    os.makedirs(training_training_real_data_path)
-    os.makedirs(training_validation_fake_data_path)
-    os.makedirs(training_validation_real_data_path)
+    os.makedirs(training_data_path)
+    os.makedirs(test_data_path)
+    os.makedirs(training_fake_data_path)
+    os.makedirs(training_real_data_path)
     os.makedirs(test_fake_data_path)
     os.makedirs(test_real_data_path)
 
 
-def copy_images(source_file_path_template, name_template, indices, is_fake, is_training, is_validation):
+def copy_images(source_file_path_template, name_template, indices, isFake, isTraining):
     for index in indices:
-        source_file_full_path = source_file_path_template + str(index) + ".png"
-        target_path = os.path.join(data_dir, 'Training') if is_training else os.path.join(data_dir, 'Test')
-        #print("SOURCE FILE FULL PATH: {}".format(source_file_full_path))
+        source_file_full_path =  source_file_path_template + str(index) + ".png"
+        target_path = os.path.join(data_dir, 'Training') if isTraining else os.path.join(data_dir, 'Test')
+
         detectors = ['opencv', 'ssd', 'dlib', 'mtcnn']
         aligned_face = functions.preprocess_face(img=source_file_full_path, detector_backend=detectors[3])[0]
         aligned_face = np.multiply(aligned_face, 255)
 
-        if is_training:
-            target_path = os.path.join(target_path, 'Training') if not is_validation else os.path.join(target_path, 'Validation')
-        if is_fake:
-            #print("Processing: "+ source_file_full_path + " To: "+ os.path.join(target_path, "Fake"))
-            target_path = target_path + "/Fake"
+        if isFake:
             #shutil.copy(source_file_full_path, "{}/Fake".format(target_path))
+            target_path = target_path + "/Fake"
         else:
-            #print("Processing: "+ source_file_full_path + " To: "+ os.path.join(target_path, "Real"))
-            target_path = target_path + "/Real"
             #shutil.copy(source_file_full_path, "{}/Real".format(target_path))
+            target_path = target_path + "/Real"
         cv2.imwrite(os.path.join(target_path, '{}_{}.png'.format(name_template, str(index))), aligned_face)
 
 
@@ -83,32 +72,31 @@ def process_directory(dir):
             if curr_dir != 'images':
                 continue
             images_path = os.path.join(pathlib.Path(root),curr_dir)
-            is_fake = True if "manipulated_sequences" in images_path else False
+            isFake = True if "manipulated_sequences" in images_path else False
             for images_root, images_dir, images_files in os.walk(images_path):
                 num_of_videos = len(images_dir)
                 cut_off = int(round(num_of_videos*0.8))
                 for video_index,sub_dir in enumerate(images_dir):
                     current_frames_dir = os.path.join(images_path, sub_dir)
-                    is_training = True if video_index < cut_off else False
-                    cut_off_training = int(round(cut_off * 0.8))
-                    is_validation = True if video_index >= cut_off_training else False
-                    print("Processing: {}".format(current_frames_dir))
-                    process_current_frames_dir(current_frames_dir, is_fake, is_training, is_validation)
+                    isTraining = True if video_index < cut_off else False
+                    process_current_frames_dir(current_frames_dir, isFake, isTraining)
+                    #print(current_frames_dir)
 
 
-def process_current_frames_dir(dir, is_fake, is_training, is_validation):
+def process_current_frames_dir(dir, isFake, isTraining):
     for root, dirs, files in os.walk(dir):
         files_length = len(files)
         if files_length < NUM_FRAMES :
             continue
         name_template = ""
         for file in files:
+            print("File: ", file)
             index = format_file_name(file)
             name_template = file[:index+1]
             break
         source_file_path_template = dir + "/" + name_template
         indices = get_indices(files_length)
-        copy_images(source_file_path_template, name_template, indices, is_fake, is_training, is_validation)
+        copy_images(source_file_path_template, name_template, indices, isFake, isTraining)
 
 
 for dir in root_directory:
@@ -122,7 +110,7 @@ for dir in root_directory:
 if not os.path.exists(data_dir):
     create_dirs()
 else:
-    answer = input("Already found: {}\nWould you like to overwrite?\n[Y]es | [N]o\n")
+    answer = input("Already found: {}\nWould you like to overwrite?\n[Y]es | [N]o")
 
     if answer.lower() == "n":
         sys.exit(0)
@@ -134,4 +122,3 @@ else:
 for dir in directories_to_scan:
     p = multiprocessing.Process(target=process_directory, args=(dir,))
     p.start()
-
