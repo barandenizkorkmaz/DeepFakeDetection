@@ -1,4 +1,4 @@
-# CMPE 492: DeepFake Detection - v3
+# CMPE 492: DeepFake Detection - v3 - Download Instructions
 
 This file describes the steps for downloading the `FaceForensics++` dataset. In this version, we will be able to download our dataset into a separate directory so that it can reside in a directory that is independent from the directory where the code for our model is located.
 
