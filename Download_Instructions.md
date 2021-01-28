@@ -212,12 +212,8 @@ python3 select_frames.py
         		|-- original_sequences
         		|-- CMPE492DeepfakedetectionData
         			|-- Training
-        				|-- Training
-        					|-- Fake
-        					|-- Real
-        				|-- Validation
-        					|-- Fake
-        					|-- Real
+        				|-- Fake
+        				|-- Real
         			|-- Test
         				|-- Fake
         				|-- Real
