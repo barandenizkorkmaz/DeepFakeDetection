@@ -32,20 +32,22 @@ def create_dirs():
 
 def copy_images(source_file_path_template, name_template, indices, isFake, isTraining):
     for index in indices:
-        source_file_full_path =  source_file_path_template + str(index) + ".png"
-        target_path = os.path.join(data_dir, 'Training') if isTraining else os.path.join(data_dir, 'Test')
-
-        detectors = ['opencv', 'ssd', 'dlib', 'mtcnn']
-        aligned_face = functions.preprocess_face(img=source_file_full_path, detector_backend=detectors[3])[0]
-        aligned_face = np.multiply(aligned_face, 255)
-
-        if isFake:
-            #shutil.copy(source_file_full_path, "{}/Fake".format(target_path))
-            target_path = target_path + "/Fake"
-        else:
-            #shutil.copy(source_file_full_path, "{}/Real".format(target_path))
-            target_path = target_path + "/Real"
-        cv2.imwrite(os.path.join(target_path, '{}_{}.png'.format(name_template, str(index))), aligned_face)
+        try:
+            source_file_full_path =  source_file_path_template + str(index) + ".png"
+            target_path = os.path.join(data_dir, 'Training') if isTraining else os.path.join(data_dir, 'Test')
+            detectors = ['opencv', 'ssd', 'dlib', 'mtcnn']
+            aligned_face = functions.preprocess_face(img=source_file_full_path, detector_backend=detectors[3])[0]
+            aligned_face = np.multiply(aligned_face, 255)
+            if isFake:
+                #shutil.copy(source_file_full_path, "{}/Fake".format(target_path))
+                target_path = target_path + "/Fake"
+            else:
+                #shutil.copy(source_file_full_path, "{}/Real".format(target_path))
+                target_path = target_path + "/Real"
+            cv2.imwrite(os.path.join(target_path, '{}_{}.png'.format(name_template, str(index))), aligned_face)
+        except:
+            print("Warning: Failed to detect face, skipping image.")
+            pass
 
 
 def get_indices(num_of_frames, count=NUM_FRAMES):
@@ -80,7 +82,7 @@ def process_directory(dir):
                     current_frames_dir = os.path.join(images_path, sub_dir)
                     isTraining = True if video_index < cut_off else False
                     process_current_frames_dir(current_frames_dir, isFake, isTraining)
-                    #print(current_frames_dir)
+                    print("Processing: " + current_frames_dir)
 
 
 def process_current_frames_dir(dir, isFake, isTraining):
@@ -90,7 +92,7 @@ def process_current_frames_dir(dir, isFake, isTraining):
             continue
         name_template = ""
         for file in files:
-            print("File: ", file)
+            #print("File: ", file)
             index = format_file_name(file)
             name_template = file[:index+1]
             break
