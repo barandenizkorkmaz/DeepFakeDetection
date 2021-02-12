@@ -2,44 +2,33 @@ import tensorflow as tf
 import config
 import os
 
-# Create the CNN-architecture.
-"""
-def get_cnn_model():
-    model = tf.keras.Sequential()
-    model.add(tf.keras.layers.Conv2D(16, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same', input_shape=config.IMG_SHAPE))
-    model.add(tf.keras.layers.MaxPooling2D((2, 2)))
-    model.add(tf.keras.layers.Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
-    model.add(tf.keras.layers.MaxPooling2D((2, 2)))
-    model.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
-    model.add(tf.keras.layers.MaxPooling2D((2, 2)))
-    model.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
-    model.add(tf.keras.layers.MaxPooling2D((2, 2)))
-    model.add(tf.keras.layers.Flatten())
-    model.add(tf.keras.layers.Dense(1024, activation='relu'))
-    model.add(tf.keras.layers.Dense(32, activation='relu'))
-    model.add(tf.keras.layers.Dense(1, activation='sigmoid'))
-    # compile model
-    model.compile(loss=tf.losses.BinaryCrossentropy(),
-                  optimizer=tf.optimizers.Adam(lr=0.0001),
-                  metrics=[tf.metrics.BinaryAccuracy(name='accuracy')])
-    print(model.summary())
-    return model
-"""
+def get_base_model():
+    return tf.keras.applications.VGG16(input_shape=config.IMG_SHAPE,
+                                      include_top=False,
+                                      weights='imagenet')
 
-def get_cnn_model():
-    model = tf.keras.Sequential()
-    model.add(tf.keras.layers.Conv2D(16, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same', input_shape=config.IMG_SHAPE))
-    model.add(tf.keras.layers.MaxPooling2D((2, 2)))
-    model.add(tf.keras.layers.Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
-    model.add(tf.keras.layers.MaxPooling2D((2, 2)))
-    model.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
-    model.add(tf.keras.layers.MaxPooling2D((2, 2)))
-    model.add(tf.keras.layers.Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
-    model.add(tf.keras.layers.MaxPooling2D((2, 2)))
-    model.add(tf.keras.layers.Flatten())
-    model.add(tf.keras.layers.Dense(1024, activation='relu'))
-    model.add(tf.keras.layers.Dense(32, activation='relu'))
-    model.add(tf.keras.layers.Dense(1, activation='sigmoid'))
+# Create the CNN-architecture.
+def get_cnn_model(fine_tuning:bool):
+    base_model = get_base_model()
+    print("Number of Layers in Base Model: ",len(base_model.layers))
+    if fine_tuning == False:
+        base_model.trainable = False
+    else:
+        for layer in base_model.layers[:15]:
+            layer.trainable = False
+        for layer in base_model.layers[15:]:
+            layer.trainable = True
+    global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
+    dense = tf.keras.layers.Dense(64, activation='relu')
+    dropout = tf.keras.layers.Dropout(0.2)
+    prediction_layer = tf.keras.layers.Dense(1, activation='sigmoid')
+    model = tf.keras.Sequential([
+        base_model,
+        global_average_layer,
+        dense,
+        dropout,
+        prediction_layer
+    ])
     # compile model
     model.compile(loss=tf.losses.BinaryCrossentropy(),
                   optimizer=tf.optimizers.Adam(lr=config.BASE_LEARNING_RATE),

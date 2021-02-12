@@ -24,6 +24,10 @@ NUM_FRAMES_PER_VIDEO = 50
 TRAINING_BATCH_SIZE = NUM_FRAMES_PER_VIDEO
 TEST_BATCH_SIZE = NUM_FRAMES_PER_VIDEO
 
+RAW_IMAGE_HEIGHT = 224
+RAW_IMAGE_WIDTH = 224
+RAW_IMAGE_CHANNELS = 3
+
 IMAGE_HEIGHT = 224
 IMAGE_WIDTH = 224
 IMAGE_CHANNELS = 3
@@ -35,23 +39,19 @@ Model Configurations
 BASE_LEARNING_RATE = 0.0001
 VALIDATION_STEPS = 20
 DIM_FEATURES = 512
-CNN_EPOCHS = int(userArguments['-e']) if '-e' in userArguments else 20
+TOTAL_EPOCHS = int(userArguments['-e']) if '-e' in userArguments else int(20)
+INITIAL_EPOCHS = int(TOTAL_EPOCHS / 2)
+FINE_TUNING_EPOCHS = TOTAL_EPOCHS - INITIAL_EPOCHS
 CNN_BATCH_SIZE = int(userArguments['-b']) if '-b' in userArguments else 32
-
-#LSTM
-NUMBER_OF_UNITS = 1024 # DIMENSIONALITY OF HIDDEN LAYERS
-LSTM_EPOCHS = int(userArguments['-e']) if '-e' in userArguments else 50
-LSTM_BATCH_SIZE = int(userArguments['-b']) if '-b' in userArguments else 16
-LSTM_INPUT_SHAPE = (NUM_FRAMES_PER_VIDEO,DIM_FEATURES) # (timesteps, features)
 
 """
 Data Configurations - 2
 """
 raw_data_config = {
     'Batch Size':CNN_BATCH_SIZE,
-    'Height':224,
-    'Width':224,
-    'Channel':3,
+    'Height':RAW_IMAGE_HEIGHT,
+    'Width':RAW_IMAGE_WIDTH,
+    'Channel':RAW_IMAGE_CHANNELS,
     'Shuffle':True,
     'Seed':123,
     'Validation Split':0.2
@@ -59,9 +59,9 @@ raw_data_config = {
 
 training_data_config = {
     'Batch Size':CNN_BATCH_SIZE,
-    'Height':224,
-    'Width':224,
-    'Channel':3,
+    'Height':IMAGE_HEIGHT,
+    'Width':IMAGE_WIDTH,
+    'Channel':IMAGE_CHANNELS,
     'Shuffle':True,
     'Seed':123,
     'Validation Split':0.2
@@ -69,9 +69,9 @@ training_data_config = {
 
 test_data_config = {
     'Batch Size':CNN_BATCH_SIZE,
-    'Height':224,
-    'Width':224,
-    'Channel':3,
+    'Height':IMAGE_HEIGHT,
+    'Width':IMAGE_WIDTH,
+    'Channel':IMAGE_CHANNELS,
     'Shuffle':False,
     'Seed':None,
     'Validation Split':None
@@ -87,7 +87,8 @@ SIGMOID_THRESHOLD = 0.5
 """
 CONSTANTS
 """
-PATH_MODEL = os.path.join(os.getcwd(), "DeepfakeDetection_Model")
+PATH_BASE_MODEL = os.path.join(os.getcwd(), "DeepfakeDetection_BaseModel")
+PATH_FINE_TUNED_MODEL = os.path.join(os.getcwd(), "DeepfakeDetection_FineTunedModel")
 PATH_TRAINING_SCRIPT = os.path.join(os.getcwd(),"model/train_model.py")
 PATH_TEST_SCRIPT = os.path.join(os.getcwd(),"model/test_model.py")
 
