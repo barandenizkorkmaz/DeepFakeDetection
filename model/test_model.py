@@ -17,13 +17,23 @@ del raw_test
 y_actual = data_handler.get_labels(test)
 
 # Import Previously Trained CNN.
-cnn = tf.keras.models.load_model(config.PATH_MODEL)
+cnn_base = tf.keras.models.load_model(config.PATH_BASE_MODEL)
+cnn_fine_tuned = tf.keras.models.load_model(config.PATH_FINE_TUNED_MODEL)
 
 # Predict
 print("Predicting for Test Dataset...")
-history_test = cnn.evaluate(test)
-y_predicted = (cnn.predict(test) > config.SIGMOID_THRESHOLD).astype("int32")
+history_test = cnn_base.evaluate(test)
+y_predicted = (cnn_base.predict(test) > config.SIGMOID_THRESHOLD).astype("int32")
 
 # Accuracy
 evaluation_utils.plot_confusion_matrix(y_actual, y_predicted)
 evaluation_utils.evaluation(y_actual, y_predicted)
+
+# Predict
+print("Predicting for Test Dataset...")
+history_test_fine = cnn_fine_tuned.evaluate(test)
+y_predicted_fine = (cnn_fine_tuned.predict(test) > config.SIGMOID_THRESHOLD).astype("int32")
+
+# Accuracy
+evaluation_utils.plot_confusion_matrix(y_actual, y_predicted_fine)
+evaluation_utils.evaluation(y_actual, y_predicted_fine)
