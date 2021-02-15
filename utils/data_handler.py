@@ -56,4 +56,13 @@ def get_labels(data):
   for image, label in data:
     current_labels = label.numpy()
     y_actual.extend(current_labels)
-  return y_actual
+  return np.array(y_actual,dtype=int)
+
+def get_video_labels_from_batchimagedataset(batchImageDataset):
+  video_labels = list()
+  count=1
+  for video in batchImageDataset.as_numpy_iterator():
+    _, labels = video
+    video_labels.append(labels[0])
+    count+=1
+  return np.array(video_labels), len(video_labels)

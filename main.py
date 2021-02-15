@@ -8,7 +8,7 @@ from model import model_utils
 
 args = ' '.join(sys.argv[1:])
 
-model_found = model_utils.search_model(config.PATH_MODEL)
+model_found = model_utils.search_model(config.PATH_BASE_MODEL)
 command_training = "python3 {} {}".format(config.PATH_TRAINING_SCRIPT,args)
 command_test = "python3 {} {}".format(config.PATH_TEST_SCRIPT,args)
 
