@@ -5,10 +5,11 @@ from utils import data_handler, evaluation_utils
 import model_utils
 
 # Import Training Data
-data_dir = pathlib.Path(config.PATH_TRAINING)
+training_data_dir = pathlib.Path(config.PATH_TRAINING)
+validation_data_dir = pathlib.Path(config.PATH_VALIDATION)
 print("Importing the Dataset...")
-raw_train = data_handler.import_data(data_dir,config.raw_data_config,"training")
-raw_validation = data_handler.import_data(data_dir,config.raw_data_config,"validation")
+raw_train = data_handler.import_data(training_data_dir,config.training_data_config)
+raw_validation = data_handler.import_data(validation_data_dir,config.validation_data_config)
 
 # Format the Dataset
 print("Formatting the Dataset...")
@@ -21,7 +22,7 @@ cnn = model_utils.get_cnn_model()
 
 # Initial Model Status
 loss0,accuracy0 = cnn.evaluate(validation)
-print("Initial Loss = {:.2f}, Initial Accuracy = {:.2f}".format(loss0,accuracy0))
+print("Initial Loss = {:.3f}, Initial Accuracy = {:.3f}".format(loss0,accuracy0))
 
 # Train Model
 history = cnn.fit(x=train, epochs=config.CNN_EPOCHS, validation_data=validation)

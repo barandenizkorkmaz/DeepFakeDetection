@@ -6,7 +6,7 @@ from utils import data_handler, evaluation_utils
 # Import Training Data
 print("Importing the Test Dataset...")
 test_data_dir = pathlib.Path(config.PATH_TEST)
-raw_test = data_handler.import_data(test_data_dir,config.test_data_config,subset=None)
+raw_test = data_handler.import_data(test_data_dir,config.test_data_config)
 
 # Format the Dataset
 print("Formatting the Test Dataset...")

@@ -18,6 +18,7 @@ Data Configurations
 """
 NAME_DATA = "CMPE492_Deepfakedetection_Data"
 PATH_TRAINING = os.path.join(userArguments['-d'],'Training')
+PATH_VALIDATION = os.path.join(userArguments['-d'],'Validation')
 PATH_TEST = os.path.join(userArguments['-d'],'Test')
 
 NUM_FRAMES_PER_VIDEO = 50
@@ -64,7 +65,19 @@ training_data_config = {
     'Channel':3,
     'Shuffle':True,
     'Seed':123,
-    'Validation Split':0.2
+    'Validation Split':None,
+    'Subset': None
+}
+
+validation_data_config = {
+    'Batch Size':CNN_BATCH_SIZE,
+    'Height':224,
+    'Width':224,
+    'Channel':3,
+    'Shuffle':False,
+    'Seed':123,
+    'Validation Split':None,
+    'Subset': None
 }
 
 test_data_config = {
@@ -74,7 +87,8 @@ test_data_config = {
     'Channel':3,
     'Shuffle':False,
     'Seed':None,
-    'Validation Split':None
+    'Validation Split':None,
+    'Subset': None
 }
 
 IMG_SHAPE = (IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS)
