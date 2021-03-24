@@ -29,15 +29,31 @@ This file describes the steps for training our model.
 
    `TARGET_DIR` should be a user-defined directory where you want the dataset to be located. You will use `TARGET_DIR` while entering the path of dataset for training.
 
-4. Add the path of current working directory into `PYTHONPATH` environment variable.
+4. Create a virtual environment called `env` and activate the virtual environment you have created. (You can give any name for virtual environment.)
 
+   ```bash
+   python3 -m venv env
+   source env/bin/activate
    ```
+
+5. Upgrade the pip of virtual environment and install the required packages into virtual environment.
+
+   ```bash
+   pip install --upgrade pip
+   pip install -r requirements.txt
+   ```
+
+   
+
+6. Add the path of current working directory into `PYTHONPATH` environment variable.
+
+   ```bash
    export PYTHONPATH=$PYTHONPATH:$(pwd)
    ```
 
-5. Run the program.
+7. Run the program.
 
-   ```
+   ```bash
    python3 main.py -d [TARGET_DIR] -e [NUM_EPOCHS] -b [BATCH_SIZE]
    ```
 
