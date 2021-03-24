@@ -1,39 +1,53 @@
 # CMPE 492: DeepFake Detection - v3 - Training Instructions
 
-This file describes the steps for training our model. These instructions must be followed after the instructions in `Download_Instructions.md` have been successfully completed.
+This file describes the steps for training our model.
 
-1. Navigate into `DATA_DIR/FaceForensicsDFD` and activate the virtual environment that you have previously created and installed the required packages.
+1. Clone our GitHub repository into any directory you want by entering the following command in terminal and navigate into the repository folder. We will call the directory of our repository folder `REPO_DIR`.
+
+   ```bash
+   git clone https://github.com/barandenizkorkmaz/DeepfakeDetection-v3-1
+   cd DeepfakeDetection-v3-1
+   ```
+
+2. We will call `DATA_DIR` as the directory where the dataset is located. Its content should look as follows:
 
    ```
-   cd [DATA_DIR]/FaceForensicsDFD
-   source env/bin/activate
+   |-- ..
+   	|-- DATA_DIR
+   		|-- deepfake_aligned
+   		|-- face2face_aligned
+   		|-- faceswap_aligned
+   		|-- ff_real_aligned
+   		|-- ...
    ```
 
-   
+3. In `REPO_DIR`, obtain the re-arranged form of the content of `DATA_DIR` (without changing the original files) in another folder. 
 
-2. Navigate into repository folder.
+   ```bash
+   python3 directory_manipulation.py -src [DATA_DIR] -dest [TARGET_DIR]
+   ```
 
-3. Add the path of current working directory into `PYTHONPATH` environment variable.
+   `TARGET_DIR` should be a user-defined directory where you want the dataset to be located. You will use `TARGET_DIR` while entering the path of dataset for training.
+
+4. Add the path of current working directory into `PYTHONPATH` environment variable.
 
    ```
    export PYTHONPATH=$PYTHONPATH:$(pwd)
    ```
 
-   
-
-4. Run the program.
+5. Run the program.
 
    ```
-   python3 main.py -d [DATASET_DIR] -e [NUM_EPOCHS] -b [BATCH_SIZE]
+   python3 main.py -d [TARGET_DIR] -e [NUM_EPOCHS] -b [BATCH_SIZE]
    ```
 
    
 
-   1. DATASET_DIR: The directory of dataset that you have previously created. It is in the following format `../CMPE492_DeepFakeDetection_FaceForensics/HQ/FaceForensicsDFD/CMPE492DeepfakedetectionData` if you have followed the suggested directory structure.
+   1. TARGET_DIR: The directory of dataset that you have previously created in step (3).
    2. NUM_EPOCHS: Number of epochs. (Default = 20)
    3. BATCH_SIZE: Batch size. (Default = 32)
 
-The program will check whether the current working directory contains a model named `DeepfakeDetection_Model`.
+The program will check whether the current working directory (`REPO_DIR`) contains a model named `DeepfakeDetection_Model`.
 
 * If there is a pretrained model, the program will simply import the pretrained model and make predictions on the test data.
 * Else, the program will train a new model from scratch and make predictions on test data.
