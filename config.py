@@ -32,9 +32,9 @@ Model Configurations
 BASE_LEARNING_RATE = 0.0001
 VALIDATION_STEPS = 20
 DIM_FEATURES = 512
-CNN_EPOCHS = int(userArguments['-e']) if '-e' in userArguments else 20
-CNN_INITIAL_EPOCHS = int(CNN_EPOCHS)/2
-CNN_BATCH_SIZE = int(userArguments['-b']) if '-b' in userArguments else 32
+CNN_EPOCHS = int(userArguments['-e']) if '-e' in userArguments else int(20)
+CNN_INITIAL_EPOCHS = int(CNN_EPOCHS/2)
+CNN_BATCH_SIZE = int(userArguments['-b']) if '-b' in userArguments else int(32)
 
 """
 Data Configurations - 2
