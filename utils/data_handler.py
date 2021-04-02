@@ -7,7 +7,7 @@ import csv
 import config
 
 # Imports the dataset.
-def import_data(directory,config,subset):
+def import_data(directory:str,config:dict):
   """
   Imports the data according to given configurations.
   Arguments:
@@ -38,7 +38,7 @@ def import_data(directory,config,subset):
     shuffle=config['Shuffle'],
     seed=config['Seed'],
     validation_split=config['Validation Split'],
-    subset= subset
+    subset=config['Subset']
   )
 
 # Formats a dataset instance.
